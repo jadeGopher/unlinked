@@ -1,0 +1,95 @@
+syntax = "proto3";
+package unlinked;
+import "google/api/annotations.proto";
+option go_package = "./proto";
+
+service UnlinkedService {
+  rpc GetUserProfileInfo (GetUserProfileInfoRequest) returns (GetUserProfileInfoResponse) {
+    option (google.api.http) = {
+      get: "/user/profile/{profile_id}"
+    };
+  }
+
+  rpc GetUserFriendsList (GetUserFriendsListRequest) returns (GetUserFriendsListResponse) {
+    option (google.api.http) = {
+      get: "/user/profile/{profile_id}/friend"
+    };
+  }
+
+  rpc GetUserPhotos (GetUserPhotosRequest) returns (GetUserPhotosResponse) {
+    option (google.api.http) = {
+      get: "/user/profile/{profile_id}/photo"
+    };
+  }
+
+  rpc GetPhotoReactions (GetPhotoReactionsRequest) returns (GetPhotoReactionsResponse) {
+    option (google.api.http) = {
+      get: "/user/profile/{profile_id}/photo/{photo_id}/reaction/{reaction_id}"
+    };
+  }
+}
+
+message GetUserProfileInfoRequest {
+  int64 profile_id = 1;
+}
+
+message GetUserProfileInfoResponse {
+  UserProfile user_profile = 1;
+}
+
+message GetUserFriendsListRequest {
+  int64 profile_id = 1;
+  int64 page_number = 2;
+  int64 page_size = 3;
+}
+
+message GetUserFriendsListResponse {
+  repeated UserProfile friends = 1;
+  int64 total_friends_count = 2;
+}
+
+message GetUserPhotosRequest {
+  int64 profile_id = 1;
+  int64 page_number = 2;
+  int64 page_size = 3;
+}
+
+message GetUserPhotosResponse {
+  repeated Photo photos = 1;
+  int64 total_photos_count = 2;
+}
+
+message GetPhotoReactionsRequest {
+  int64 profile_id = 1;
+  int64 photo_id = 2;
+  int64 reaction_id = 3;
+  int64 page_number = 4;
+  int64 page_size = 5;
+}
+
+message GetPhotoReactionsResponse {
+  repeated Reaction reactions = 1;
+  int64 reactions_count = 2;
+}
+
+message UserProfile {
+  int64 id = 1;
+  string name = 2;
+  string avatar = 3;
+  int64 registered_at = 4;
+  int64 followers_count = 5;
+  int64 photos_count = 6;
+}
+
+message Photo {
+  int64 id = 1;
+  string url = 2;
+  map<int64, int64> reactions_count = 3; // id of reaction (like, dislike and so on) and count of it
+  int64 created_at = 4;
+}
+
+message Reaction {
+  int64 id = 1;
+  UserProfile user_profile = 2;
+  int64 created_at = 3;
+}
