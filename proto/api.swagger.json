@@ -11,6 +11,58 @@
     "application/json"
   ],
   "paths": {
+    "/photo/{photo_id}/reaction/{reaction_id}": {
+      "get": {
+        "operationId": "UnlinkedService_GetPhotoReactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/unlinkedGetPhotoReactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "reaction_id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "UnlinkedService"
+        ]
+      }
+    },
     "/user/profile/{profile_id}": {
       "get": {
         "operationId": "UnlinkedService_GetUserProfileInfo",
@@ -131,65 +183,6 @@
           "UnlinkedService"
         ]
       }
-    },
-    "/user/profile/{profile_id}/photo/{photo_id}/reaction/{reaction_id}": {
-      "get": {
-        "operationId": "UnlinkedService_GetPhotoReactions",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/unlinkedGetPhotoReactionsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "profile_id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "photo_id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "reaction_id",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "UnlinkedService"
-        ]
-      }
     }
   },
   "definitions": {
@@ -229,10 +222,10 @@
     "unlinkedGetPhotoReactionsResponse": {
       "type": "object",
       "properties": {
-        "reactions": {
+        "user_profile": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/unlinkedReaction"
+            "$ref": "#/definitions/unlinkedUserProfile"
           }
         },
         "reactions_count": {
@@ -289,11 +282,10 @@
         "url": {
           "type": "string"
         },
-        "reactions_count": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
+        "reactions_info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/unlinkedReactionInfo"
           }
         },
         "created_at": {
@@ -302,17 +294,17 @@
         }
       }
     },
-    "unlinkedReaction": {
+    "unlinkedReactionInfo": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "format": "int64"
         },
-        "user_profile": {
-          "$ref": "#/definitions/unlinkedUserProfile"
+        "name": {
+          "type": "string"
         },
-        "created_at": {
+        "count": {
           "type": "string",
           "format": "int64"
         }
@@ -328,7 +320,7 @@
         "name": {
           "type": "string"
         },
-        "photo": {
+        "avatar": {
           "type": "string"
         },
         "registered_at": {

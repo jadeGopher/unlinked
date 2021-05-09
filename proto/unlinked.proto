@@ -1,6 +1,7 @@
 syntax = "proto3";
 package unlinked;
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 option go_package = "./proto";
 
 service UnlinkedService {
@@ -24,13 +25,13 @@ service UnlinkedService {
 
   rpc GetPhotoReactions (GetPhotoReactionsRequest) returns (GetPhotoReactionsResponse) {
     option (google.api.http) = {
-      get: "/user/profile/{profile_id}/photo/{photo_id}/reaction/{reaction_id}"
+      get: "/photo/{photo_id}/reaction/{reaction_id}"
     };
   }
 }
 
 message GetUserProfileInfoRequest {
-  int64 profile_id = 1;
+  int64 profile_id = 1 [(validate.rules).int64.gte = 0];
 }
 
 message GetUserProfileInfoResponse {
@@ -38,9 +39,9 @@ message GetUserProfileInfoResponse {
 }
 
 message GetUserFriendsListRequest {
-  int64 profile_id = 1;
-  int64 page_number = 2;
-  int64 page_size = 3;
+  int64 profile_id = 1 [(validate.rules).int64.gte = 0];
+  int64 page_number = 2 [(validate.rules).int64.gte = 0];
+  int64 page_size = 3 [(validate.rules).int64.gt = 0];
 }
 
 message GetUserFriendsListResponse {
@@ -49,9 +50,9 @@ message GetUserFriendsListResponse {
 }
 
 message GetUserPhotosRequest {
-  int64 profile_id = 1;
-  int64 page_number = 2;
-  int64 page_size = 3;
+  int64 profile_id = 1 [(validate.rules).int64.gte = 0];
+  int64 page_number = 2 [(validate.rules).int64.gte = 0];
+  int64 page_size = 3 [(validate.rules).int64.gt = 0];
 }
 
 message GetUserPhotosResponse {
@@ -60,15 +61,14 @@ message GetUserPhotosResponse {
 }
 
 message GetPhotoReactionsRequest {
-  int64 profile_id = 1;
-  int64 photo_id = 2;
-  int64 reaction_id = 3;
-  int64 page_number = 4;
-  int64 page_size = 5;
+  int64 photo_id = 1 [(validate.rules).int64.gt = 0];
+  int64 reaction_id = 2 [(validate.rules).int64.gt = 0];
+  int64 page_number = 3 [(validate.rules).int64.gte = 0];
+  int64 page_size = 4 [(validate.rules).int64.gt = 0];
 }
 
 message GetPhotoReactionsResponse {
-  repeated Reaction reactions = 1;
+  repeated UserProfile user_profile = 1;
   int64 reactions_count = 2;
 }
 
@@ -84,12 +84,12 @@ message UserProfile {
 message Photo {
   int64 id = 1;
   string url = 2;
-  map<int64, int64> reactions_count = 3; // id of reaction (like, dislike and so on) and count of it
+  repeated ReactionInfo reactions_info = 3;
   int64 created_at = 4;
 }
 
-message Reaction {
+message ReactionInfo {
   int64 id = 1;
-  UserProfile user_profile = 2;
-  int64 created_at = 3;
+  string name = 2;
+  int64 count = 3;
 }
